@@ -84,6 +84,6 @@ class WebScrapperMoretti():
 
 if __name__ == "__main__":
     WC = WebScrapperMoretti(start_url="https://www.moretti.imb.br/imoveis-para-venda/page/", n_pages=4)
-    WC.scrap_data("Lista_Imoveis_Compra")
+    WC.scrap_data("Lista_Imoveis_Comprar")
     WC = WebScrapperMoretti(start_url="https://www.moretti.imb.br/imoveis-para-locacao/page/", n_pages=4)
     WC.scrap_data("Lista_Imoveis_Alugar")
