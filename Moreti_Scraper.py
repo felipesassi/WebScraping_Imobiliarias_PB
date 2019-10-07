@@ -3,15 +3,37 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 class WebScrapperMoretti():
+    """
+    Essa classe é utilizada para realizar a raspagem de dados no site da construtora Moretti, em Pato Branco (PR).
 
+    Parâmetros
+    ----------
+
+    start_url: url
+        url inicial da página de imóveis a venda
+    n_pages: int
+        número de páginas a serem visitadas
+    """
     def __init__(self, start_url="https://www.moretti.imb.br/apartamentos-para-venda/page/", n_pages=2):
         self.start_url = start_url
         self.n_pages = n_pages
 
     def __get_request(self, url):
+        """
+        Essa função lida com as requições Web
+
+        Parâmetros
+        ----------
+
+        url: url
+            url a ser feita a requisição do tipo GET
+        """
         return requests.get(url)
 
     def __scrap_links(self):
+        """
+        Retorna os links de todos os imóveis a venda, para consulta posterior
+        """
         self.links = []
         for i in range(self.n_pages):
             url = self.start_url + str(i + 1)
@@ -23,6 +45,9 @@ class WebScrapperMoretti():
             self.n_links = len(self.links)
 
     def scrap_data(self):
+        """
+        Gera a lista de todos os imóveis presentes no site
+        """
         self.__scrap_links()
         data_dict = dict()
         dict_list = list()
@@ -43,10 +68,16 @@ class WebScrapperMoretti():
         data_final.to_csv("Lista_Imoveis.csv")
 
     def get_links(self):
+        """
+        Retorna os links de cada imóvel
+        """
         return self.links
 
     def get_data(self):
-        return self.data
+        """
+        Retorna o conjunto de dados final
+        """
+        return self.data_final
 
 if __name__ == "__main__":
     WC = WebScrapperMoretti()
