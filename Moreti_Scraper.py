@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+
 class WebScrapperMoretti():
     """
     Essa classe é utilizada para realizar a raspagem de dados no site da construtora Moretti, em Pato Branco (PR).
@@ -14,7 +15,7 @@ class WebScrapperMoretti():
     n_pages: int
         número de páginas a serem visitadas
     """
-    def __init__(self, start_url="https://www.moretti.imb.br/imoveis-para-venda//page/", n_pages=4):
+    def __init__(self, start_url, n_pages=4):
         self.start_url = start_url
         self.n_pages = n_pages
 
@@ -39,12 +40,12 @@ class WebScrapperMoretti():
             url = self.start_url + str(i + 1)
             page = self.__get_request(url)
             soup = BeautifulSoup(page.text, "html.parser")
-            link = soup.findAll(class_ = "property_listing")
+            link = soup.findAll(class_="property_listing")
             for l in link:
                 self.links.append(l.find("a")["href"])
             self.n_links = len(self.links)
 
-    def scrap_data(self):
+    def scrap_data(self, save_to):
         """
         Gera a lista de todos os imóveis presentes no site
         """
@@ -54,19 +55,20 @@ class WebScrapperMoretti():
         for i, link in enumerate(self.links):
             page = self.__get_request(link)
             soup = BeautifulSoup(page.text, "html.parser")
-            data = soup.findAll(class_ = "listing_detail")
+            data = soup.findAll(class_="listing_detail")
             for d in data:
-                if d.find("strong") != None:
+                if d.find("strong") is not None:
                     key = d.find("strong").get_text()
                     data = d.get_text()
                     data = data.replace(key, "")
                     data_dict[key] = data
             data_dict["Link"] = link
-            data_dict["Categoria"] = soup.find(class_ = "property_categs").get_text().split(" ")[0]
-            dict_list.append(pd.DataFrame(data = data_dict, index = [0]))
+            data_dict["Categoria"] = soup.find(class_="property_categs").get_text().split(" ")[0]
+            dict_list.append(pd.DataFrame(data=data_dict, index=[0]))
             print("Imóvel: {}." .format(i))
-        data_final = pd.concat(dict_list, axis = 0, ignore_index = True)
-        data_final.to_csv("Lista_Imoveis.csv")
+        data_final = pd.concat(dict_list, axis=0, ignore_index=True)
+        save_to = save_to + ".csv"
+        data_final.to_csv(save_to)
 
     def get_links(self):
         """
@@ -81,5 +83,7 @@ class WebScrapperMoretti():
         return self.data_final
 
 if __name__ == "__main__":
-    WC = WebScrapperMoretti()
-    WC.scrap_data()
+    WC = WebScrapperMoretti(start_url="https://www.moretti.imb.br/imoveis-para-venda/page/", n_pages=4)
+    WC.scrap_data("Lista_Imoveis_Compra")
+    WC = WebScrapperMoretti(start_url="https://www.moretti.imb.br/imoveis-para-locacao/page/", n_pages=4)
+    WC.scrap_data("Lista_Imoveis_Alugar")
