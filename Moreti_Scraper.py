@@ -26,8 +26,7 @@ class WebScrapperMoretti():
         self.__scrap_links()
         data_dict = dict()
         dict_list = list()
-        for i, link in enumerate(self.links[:2]):
-            print(i)
+        for i, link in enumerate(self.links):
             page = self.__get_request(link)
             soup = BeautifulSoup(page.text, "html.parser")
             data = soup.findAll(class_ = "listing_detail")
@@ -39,6 +38,7 @@ class WebScrapperMoretti():
                     data_dict[key] = data
             data_dict["link"] = link
             dict_list.append(pd.DataFrame(data = data_dict, index = [0]))
+            print("Imóvel: {}." .format(i))
         data_final = pd.concat(dict_list, axis = 0, ignore_index = True)
         data_final.to_csv("Lista_Imoveis.csv")
 
