@@ -14,7 +14,7 @@ class WebScrapperMoretti():
     n_pages: int
         número de páginas a serem visitadas
     """
-    def __init__(self, start_url="https://www.moretti.imb.br/apartamentos-para-venda/page/", n_pages=2):
+    def __init__(self, start_url="https://www.moretti.imb.br/imoveis-para-venda//page/", n_pages=4):
         self.start_url = start_url
         self.n_pages = n_pages
 
@@ -61,7 +61,8 @@ class WebScrapperMoretti():
                     data = d.get_text()
                     data = data.replace(key, "")
                     data_dict[key] = data
-            data_dict["link"] = link
+            data_dict["Link"] = link
+            data_dict["Categoria"] = soup.find(class_ = "property_categs").get_text().split(" ")[0]
             dict_list.append(pd.DataFrame(data = data_dict, index = [0]))
             print("Imóvel: {}." .format(i))
         data_final = pd.concat(dict_list, axis = 0, ignore_index = True)
